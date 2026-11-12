@@ -1,33 +1,47 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { notifySuccess } from "./Toast/Toast";
+import { notifyError, notifySuccess } from "./Toast/Toast";
 
 function Login() {
   const navigate = useNavigate();
-
+  const [data, setData] = useState();
   const [name, setName] = useState("");
-  const [role, setRole] = useState("student");
+  const [user, setuser] = useState("");
+  
+
+
+  useEffect(()=>{
+     setuser(JSON.parse(localStorage.getItem('currentUser')))
+  },[])
+
+
+
+  const handleform = (e) =>{
+    const {name , value} = e.target
+
+    setData({
+        ...data,
+        [name] : value
+  })
+  }
+
 
   const handleLogin = (e) => {
     e.preventDefault();
-
-    if (!name.trim()) {
-      alert("Please enter your name");
+    
+    if(data.email !== user.email){
+      notifyError("Email not found");
+      return;
+    }
+    if(data.password !== user.password){
+      notifyError("Password incorrect");
       return;
     }
 
-    const user = {
-      name: name.trim(),
-      role: role,
-      id: name.trim().toLowerCase().replace(/\s+/g, ""),
-    };
-
-    localStorage.setItem("currentUser", JSON.stringify(user));
-
     notifySuccess("Login successful!");
 
-    if (role === "admin") {
+    if (user.role === "admin") {
       window.location.href='/admin'
     } else {
       window.location.href='/'
@@ -62,32 +76,29 @@ function Login() {
           {/* Name */}
           <div>
             <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
-              Your Name
+              Your Email
             </label>
 
             <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
+              type="email"
+              name='email'
+              onChange={handleform}
+              required={true}
+              placeholder="Enter your email"
               className="w-full border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 transition"
             />
-          </div>
-
-          {/* Role */}
-          <div>
             <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
-              Login As
+              Your Password
             </label>
 
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-800 dark:text-white rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 transition"
-            >
-              <option value="student">Student</option>
-              <option value="admin">Admin</option>
-            </select>
+            <input
+              type="password"
+              name='password'
+              required={true}
+              onChange={handleform}
+              placeholder="Enter your password"
+              className="w-full border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            />
           </div>
 
           {/* Login Button */}

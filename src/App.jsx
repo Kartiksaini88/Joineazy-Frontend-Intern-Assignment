@@ -1,11 +1,5 @@
-
 import { useEffect, useState } from "react";
-import {
-  Link,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 
 import AdminDashboard from "./pages/AdminDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
@@ -13,6 +7,8 @@ import Login from "./pages/Login";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Register from "./pages/Register";
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 
 function App() {
   const navigate = useNavigate();
@@ -35,10 +31,7 @@ function App() {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
 
-    localStorage.setItem(
-      "theme",
-      darkMode ? "dark" : "light"
-    );
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
   // Toggle Theme
@@ -60,22 +53,15 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-slate-950 text-gray-800 dark:text-white transition-colors duration-300">
-
       {/* Navbar */}
       <nav className="bg-indigo-700 dark:bg-slate-900 text-white px-5 md:px-8 py-5 flex flex-wrap justify-between items-center gap-4 transition-colors">
-
         {/* Logo */}
         <Link to="/">
-          <h1 className="text-2xl font-bold">
-            JoinEazy
-          </h1>
+          <h1 className="text-2xl font-bold">JoinEazy</h1>
         </Link>
 
         <div className="flex flex-wrap items-center gap-3 md:gap-5">
-
-          <span className="font-medium">
-            Dashboard
-          </span>
+          <span className="font-medium">Dashboard</span>
 
           {/* Dashboard Navigation */}
           <select
@@ -117,28 +103,20 @@ function App() {
           >
             {darkMode ? "☀️ Light" : "🌙 Dark"}
           </button>
-
         </div>
       </nav>
 
       {/* Routes */}
       <Routes>
+        <Route path="/" element={<StudentDashboard />} />
 
-        <Route
-          path="/"
-          element={<StudentDashboard />}
-        />
+        <Route path="/admin" element={<AdminDashboard />} />
+        
+          <Route path="/login" element={<ProtectedRoute><Login onLogin={handleLogin} />
+          </ProtectedRoute>} />
+        
 
-        <Route
-          path="/admin"
-          element={<AdminDashboard />}
-        />
-
-        <Route
-          path="/login"
-          element={<Login onLogin={handleLogin} />}
-        />
-
+        <Route path="/register" element={<Register onLogin={handleLogin} />} />
       </Routes>
 
       {/* Toast */}
@@ -152,7 +130,6 @@ function App() {
       <footer className="text-center text-gray-500 dark:text-gray-400 py-6 mt-8 border-t border-gray-200 dark:border-slate-800">
         © 2026 JoinEazy | Assignment & Review Dashboard
       </footer>
-
     </div>
   );
 }
